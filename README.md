@@ -42,6 +42,12 @@ Est. Value (total) · eBay Sold / StockX / GOAT links · Notes · Lookup Status
 Your scanned list is stored on your phone, in the browser. Export to keep a
 copy.
 
+**Import.** Settings → **Import spreadsheet (CSV)** merges a Scan2Sell
+spreadsheet back into the list by UPC. Filled-in cells update items, blank
+cells leave them alone, and unknown UPCs are added. Use it to load
+corrections made in Numbers, Excel or Google Sheets, to restore a backup, or
+to move your list to another phone.
+
 ## Put it online (free, about 10 minutes)
 
 The app needs a small server so your eBay/StockX keys stay secret. It's set up

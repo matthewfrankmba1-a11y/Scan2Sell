@@ -46,6 +46,14 @@ export function removePair(id) {
   commit();
 }
 
+/** Applies a spreadsheet import in one save. */
+export function applyImport({ updates, additions }) {
+  const patches = new Map(updates.map((u) => [u.id, u.patch]));
+  pairs = [...additions, ...pairs.map((p) => (patches.has(p.id) ? { ...p, ...patches.get(p.id) } : p))]
+    .sort((a, b) => b.scannedAt.localeCompare(a.scannedAt)); // newest first, like scanning
+  commit();
+}
+
 export function clearPairs() {
   pairs = [];
   commit();
