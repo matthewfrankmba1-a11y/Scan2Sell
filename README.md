@@ -49,7 +49,8 @@ for **[Vercel](https://vercel.com)**, whose free Hobby plan is enough.
 
 1. Sign up at vercel.com with your GitHub account.
 2. **Add New → Project**, then import **Scan2Sell**.
-3. Set **Root Directory** to **`web`**. Vercel detects everything else.
+3. Leave the settings at their defaults. The repo's `vercel.json` tells Vercel
+   how to build the app in `web/`. Setting Root Directory to `web` also works.
 4. Under **Environment Variables**, add at least:
    - `APP_PASSWORD`: any code you choose. Without it, anyone who finds your
      URL can use your API quota.
@@ -141,5 +142,6 @@ web/
   lib/                    Server-side API clients for UPCitemdb, StockX, eBay
   server.js               Same app as a plain Node server (self-hosting / local)
   test/                   node:test unit + API tests
+api/, vercel.json         Thin wrappers so Vercel can deploy from the repo root
 ios/                      Native SwiftUI version (optional, needs Xcode)
 ```

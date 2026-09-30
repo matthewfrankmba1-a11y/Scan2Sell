@@ -1,0 +1,13 @@
+{
+  "name": "scan2sell-root",
+  "private": true,
+  "type": "module",
+  "description": "Deploy wrapper: lets Vercel build the web app from the repo root. The app itself is in web/.",
+  "scripts": {
+    "build": "npm --prefix web run build",
+    "test": "npm --prefix web test"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
