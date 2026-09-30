@@ -405,3 +405,11 @@ textarea {
   font-size: 16px;
 }
 .manual .primary { width: auto; min-height: 44px; }
+
+/* ─── Key request ─── */
+.request { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+.request-title { margin: 0 0 8px; font-weight: 600; font-size: 15px; }
+.request .manual input { background: var(--input); }
+.request .hint.error { color: var(--danger); }
+.request .hint.ok { color: var(--ok); }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }

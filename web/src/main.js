@@ -28,10 +28,22 @@ function parseRoute() {
   const item = hash.match(/^\/item\/(.+)$/);
   if (item) return { name: "item", id: decodeURIComponent(item[1]) };
   if (hash === "/settings") return { name: "settings" };
+  const key = hash.match(/^\/key\/(.+)$/);
+  if (key) return { name: "key", key: decodeURIComponent(key[1]) };
   return { name: "list" };
 }
 
 function render() {
+  if (route.name === "key") {
+    // Link from the key email: save the key, then show Settings.
+    // Switch route first: saving re-renders.
+    const accessCode = route.key.trim();
+    route = { name: "settings" };
+    history.replaceState(null, "", "#/settings");
+    store.saveSettings({ accessCode });
+    refreshHealth();
+    return;
+  }
   const key = JSON.stringify(route);
   const sameView = key === renderedKey;
 
@@ -173,6 +185,38 @@ app.addEventListener("change", (event) => {
   } else if (input.name === "accessCode") {
     store.saveSettings({ accessCode: input.value.trim() });
     refreshHealth();
+  }
+});
+
+// Request an access key: posts to the server, which notifies the owner on Discord.
+app.addEventListener("submit", async (event) => {
+  const form = event.target.closest('form[data-action="request-key"]');
+  if (!form) return;
+  event.preventDefault();
+  const status = form.querySelector('[data-live="request-status"]');
+  const button = form.querySelector("button");
+  const email = form.elements.email.value.trim();
+  const show = (text, kind = "") => {
+    status.textContent = text;
+    status.className = `hint ${kind}`;
+  };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return show("Enter a valid email address.", "error");
+  button.disabled = true;
+  show("Sending…");
+  try {
+    const res = await fetch("/api/key-request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, website: form.elements.website.value }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `Server error ${res.status}`);
+    show(`Request sent. We'll email ${email} a key once it's approved.`, "ok");
+    form.elements.email.value = "";
+  } catch (err) {
+    show(err.message === "Failed to fetch" ? "Can't reach the server. Are you offline?" : err.message, "error");
+  } finally {
+    button.disabled = false;
   }
 });
 

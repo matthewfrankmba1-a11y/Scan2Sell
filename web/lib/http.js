@@ -1,4 +1,5 @@
 import { timingSafeEqual } from "node:crypto";
+import { isValidKey, keysEnabled } from "./keys.js";
 
 export class UpstreamError extends Error {
   constructor(service, status, body = "") {
@@ -30,20 +31,35 @@ export function sendJSON(res, status, body) {
 /** Request body as an object. Vercel pre-parses it; the local server does not. */
 export async function readBody(req) {
   if (req.body && typeof req.body === "object") return req.body;
-  if (typeof req.body === "string") return JSON.parse(req.body || "{}");
+  if (typeof req.body === "string") {
+    if (String(req.headers["content-type"] ?? "").startsWith("application/x-www-form-urlencoded")) {
+      return Object.fromEntries(new URLSearchParams(req.body));
+    }
+    return JSON.parse(req.body || "{}");
+  }
   const chunks = [];
   for await (const chunk of req) chunks.push(chunk);
   const raw = Buffer.concat(chunks).toString("utf8");
+  if (String(req.headers["content-type"] ?? "").startsWith("application/x-www-form-urlencoded")) {
+    return Object.fromEntries(new URLSearchParams(raw));
+  }
   return raw ? JSON.parse(raw) : {};
 }
 
-/** When APP_PASSWORD is set, every API call must send it as x-access-code. */
+/** Access is restricted when APP_PASSWORD (a master code) or ACCESS_KEY_SECRET (per-person keys) is set. */
+export const authRequired = () => Boolean(process.env.APP_PASSWORD || keysEnabled());
+
+/** Accepts the master APP_PASSWORD or a valid per-person access key, sent as x-access-code. */
 export function isAuthorized(req, provided = req.headers["x-access-code"]) {
-  const expected = process.env.APP_PASSWORD;
-  if (!expected) return true;
-  const a = Buffer.from(String(provided ?? ""));
-  const b = Buffer.from(expected);
-  return a.length === b.length && timingSafeEqual(a, b);
+  if (!authRequired()) return true;
+  const code = String(provided ?? "").trim();
+  const master = process.env.APP_PASSWORD;
+  if (master) {
+    const a = Buffer.from(code);
+    const b = Buffer.from(master);
+    if (a.length === b.length && timingSafeEqual(a, b)) return true;
+  }
+  return isValidKey(code);
 }
 
 /**

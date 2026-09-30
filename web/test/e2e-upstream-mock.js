@@ -25,5 +25,13 @@ globalThis.fetch = async (url, options) => {
     const prices = [112, 118, 120, 125, 129, 450];
     return json({ itemSummaries: prices.map((p) => ({ title: `Nike Dunk Low Panda DD1391-100 Size 10`, price: { value: String(p) } })) });
   }
+  if (u.includes("discord.com/api/webhooks")) {
+    console.log("[mock discord]", options?.method, u.replace(/webhooks\/\d+\/[\w-]+/, "webhooks/…"), options?.body ?? "");
+    return json({ id: "999" });
+  }
+  if (u.includes("api.brevo.com")) {
+    console.log("[mock brevo] to", JSON.parse(options.body).to[0].email);
+    return json({ messageId: "m1" }, 201);
+  }
   return realFetch(url, options);
 };
