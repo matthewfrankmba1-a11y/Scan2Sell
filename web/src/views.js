@@ -232,6 +232,10 @@ export function settingsView({ settings, health, healthError, count }) {
 
     <section class="card">
       <h3>Data (${count} item${count === 1 ? "" : "s"} on this device)</h3>
+      <label class="button block import">Import spreadsheet (CSV)
+        <input type="file" name="import" accept=".csv,text/csv,text/comma-separated-values" hidden>
+      </label>
+      <p class="hint">Merges a Scan2Sell spreadsheet into this list by UPC. Filled-in cells update your items, blank cells leave them alone, and new UPCs are added.</p>
       <button class="block" data-action="refresh-all" ${count ? "" : "disabled"}>Refresh all prices</button>
       <button class="danger block" data-action="clear" ${count ? "" : "disabled"}>Delete all items</button>
       <p class="hint">Your list is saved only in this browser. Export regularly to keep a copy.</p>

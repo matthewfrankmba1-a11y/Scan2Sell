@@ -213,6 +213,8 @@ button:disabled { opacity: 0.4; cursor: default; }
 .primary { background: var(--accent); color: var(--accent-text); }
 .primary.big { min-height: 56px; font-size: 19px; border-radius: 16px; box-shadow: 0 6px 20px rgb(255 106 0 / 0.3); }
 .button { background: var(--accent); color: var(--accent-text); margin-top: 12px; }
+.button.import { margin: 0; cursor: pointer; }
+.button.import + .hint { margin-bottom: 12px; }
 button.danger { background: none; color: var(--danger); }
 button.block + button.block { margin-top: 8px; }
 .content > .danger { margin-top: 4px; }

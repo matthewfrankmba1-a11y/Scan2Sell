@@ -6,6 +6,7 @@ import { exportSpreadsheet } from "./exporter.js";
 import { readLabel } from "./ocr.js";
 import { normalizeBarcode } from "../shared/labelParser.js";
 import { labelPatch, newPair } from "../shared/pairs.js";
+import { planImport } from "../shared/csvImport.js";
 import * as views from "./views.js";
 
 const app = document.getElementById("app");
@@ -165,13 +166,40 @@ app.addEventListener("input", (event) => {
 app.addEventListener("change", (event) => {
   const input = event.target;
   if (route.name !== "settings" || !input.name) return;
-  if (input.type === "checkbox") {
+  if (input.name === "import") {
+    importSpreadsheet(input);
+  } else if (input.type === "checkbox") {
     store.saveSettings({ [input.name]: input.checked });
   } else if (input.name === "accessCode") {
     store.saveSettings({ accessCode: input.value.trim() });
     refreshHealth();
   }
 });
+
+async function importSpreadsheet(input) {
+  const file = input.files?.[0];
+  input.value = ""; // allow picking the same file again
+  if (!file) return;
+  let plan;
+  try {
+    plan = planImport(store.getPairs(), await file.text());
+  } catch (err) {
+    return alert(`Couldn't import ${file.name}: ${err.message}`);
+  }
+  const { updates, additions, unchanged, skipped } = plan;
+  if (!updates.length && !additions.length) {
+    return alert(`Nothing to change: all ${unchanged} matching items already have this data.`);
+  }
+  store.applyImport(plan);
+  const lines = [
+    updates.length && `Updated ${updates.length} item${updates.length === 1 ? "" : "s"}`,
+    additions.length && `Added ${additions.length} new item${additions.length === 1 ? "" : "s"}`,
+    unchanged && `${unchanged} already up to date`,
+    skipped && `${skipped} row${skipped === 1 ? "" : "s"} skipped (no valid UPC)`,
+  ].filter(Boolean);
+  alert(lines.join("\n"));
+  location.hash = "#/";
+}
 
 // ─── Scanner ────────────────────────────────────────────────────────────────
 
