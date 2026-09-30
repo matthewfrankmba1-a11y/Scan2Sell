@@ -50,7 +50,9 @@ function setupBanner(health, healthError) {
   }
   if (!health) return "";
   if (health.authRequired && !health.authorized) {
-    return `<a class="banner" href="#/settings">${icons.warn}<span>Enter your access code in Settings to look up prices.</span></a>`;
+    return `<a class="banner" href="#/settings">${icons.warn}<span>${health.keyRequests
+      ? "This app needs an access key to look up shoes and prices. Tap to enter or request one."
+      : "Enter your access key in Settings to look up shoes and prices."}</span></a>`;
   }
   if (!health.sources.ebay && !health.sources.stockx) {
     return `<a class="banner" href="#/settings">${icons.warn}<span>No eBay or StockX keys on the server yet, so you'll get names but no prices. See Settings.</span></a>`;
@@ -197,14 +199,24 @@ export function settingsView({ settings, health, healthError, count }) {
   </header>
   <main class="content">
     <section class="card form">
-      <h3>Access code</h3>
-      <label class="field"><span>Code</span>
-        <input name="accessCode" type="password" value="${h(settings.accessCode)}" placeholder="If your server needs one" autocomplete="current-password">
+      <h3>Access key</h3>
+      <label class="field"><span>Key</span>
+        <input name="accessCode" type="password" value="${h(settings.accessCode)}" placeholder="S2S-XXXX-XXXX-…" autocomplete="current-password" autocapitalize="characters" spellcheck="false">
       </label>
       <p class="hint">${healthError ? `Can't reach the server: ${h(healthError)}`
         : !health ? "Checking…"
-        : !health.authRequired ? "This server doesn't require a code."
-        : health.authorized ? "✓ Code accepted." : "Code missing or wrong."}</p>
+        : !health.authRequired ? "This server doesn't require a key."
+        : health.authorized ? "✓ Key accepted." : settings.accessCode ? "That key isn't valid." : "Enter your key, or request one below."}</p>
+      ${health?.authRequired && !health.authorized && health.keyRequests ? `
+      <form class="request" data-action="request-key" novalidate>
+        <p class="request-title">Don't have a key? Request one</p>
+        <div class="manual">
+          <input name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" aria-label="Your email" required>
+          <button class="primary" type="submit">Request</button>
+        </div>
+        <input name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+        <p class="hint" data-live="request-status">We'll email you a key once your request is approved.</p>
+      </form>` : ""}
     </section>
 
     <section class="card">

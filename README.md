@@ -58,8 +58,9 @@ for **[Vercel](https://vercel.com)**, whose free Hobby plan is enough.
 3. Leave the settings at their defaults. The repo's `vercel.json` tells Vercel
    how to build the app in `web/`. Setting Root Directory to `web` also works.
 4. Under **Environment Variables**, add at least:
-   - `APP_PASSWORD`: any code you choose. Without it, anyone who finds your
-     URL can use your API quota.
+   - Optional: lock the app so strangers can't use your API quota. Use either
+     one shared code (`APP_PASSWORD`) or per-person keys that people request
+     and you approve in Discord (see [Access keys](#access-keys-optional)).
    - Your eBay and StockX keys (see below). You can add these later.
 5. Click **Deploy**. You get a URL like `https://scan2sell-yourname.vercel.app`.
 
@@ -73,6 +74,32 @@ first, or pick the branch in Vercel's project settings.
    access code, and allow camera access when you first tap Scan.
 
 To share it with someone, send them the URL and the access code.
+
+## Access keys (optional)
+
+Lock the app so only people you approve can use it:
+
+1. Someone opens the app, goes to **Settings**, enters their email and taps **Request**.
+2. A message appears in your Discord channel with an **Approve & email key** button.
+3. Tapping it opens an approval page. Confirm there, and they're emailed a key
+   (`S2S-XXXX-XXXX-XXXX-XXXX-XXXX`) with a link that adds it to the app in one tap.
+
+Set these Vercel environment variables, then redeploy:
+
+| Variable | What to put |
+|---|---|
+| `ACCESS_KEY_SECRET` | A long random string (32+ characters). Turns the lock on. Changing it cancels every issued key. |
+| `DISCORD_WEBHOOK_URL` | Discord → channel ⚙︎ → Integrations → Webhooks → New Webhook → Copy URL |
+| `BREVO_API_KEY` | brevo.com (free) → SMTP & API → API Keys. Also verify your sender address under Senders. |
+| `MAIL_FROM` | The verified sender, e.g. `Scan2Sell <you@gmail.com>` |
+| `APP_PASSWORD` | Optional master code that always works |
+| `REVOKED_KEYS` | Optional. Comma-separated keys to block. |
+
+`RESEND_API_KEY` works instead of Brevo if you have your own domain. Without an
+email provider, the approval page shows the key so you can send it yourself.
+
+Keys are signed with `ACCESS_KEY_SECRET` instead of stored in a database, so
+the same email always gets the same key.
 
 ## Price source setup
 
