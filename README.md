@@ -52,12 +52,14 @@ to move your list to another phone.
 Settings → **Label printer**. Pick a shipping label you downloaded (PDF, PNG
 or JPG from eBay, StockX, GOAT, USPS and so on). Scan2Sell cuts the label out
 of the page and drops the instructions printed around it. It then turns the
-label horizontal and sizes it to your label: 4×6, Dymo 30256 or 30252,
+label to fit and sizes it to your label: 4×6, Dymo 30256 or 30252,
 Brother 62 mm, or a custom size. **Print** sends it at that exact size.
 **Save PDF** or **Save image** opens the share sheet, so you can open the
 label in your label maker's own app (Dymo Connect, Brother iPrint&Label,
-Rollo, Phomemo, Munbyn). Use **Rotate** if it comes out the wrong way, and
-turn on **Black & white** for sharper barcodes on thermal printers. Your file
+Rollo, Phomemo, Munbyn). Layout starts on **Vertical (tall)**, which is how
+Zebra, Rollo and most 4×6 thermal printers feed labels; switch to
+**Horizontal (wide)** if your printer feeds them sideways. Use **Rotate** if
+it comes out the wrong way, and turn on **Black & white** for sharper barcodes on thermal printers. Your file
 stays on your phone and isn't uploaded.
 
 ## Put it online (free, about 10 minutes)

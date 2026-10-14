@@ -17,7 +17,9 @@ const state = {
   pageIndex: 0,
   sizeId: saved.sizeId ?? "4x6",
   custom: saved.custom ?? { width: 6, height: 4 },
-  orientation: saved.orientation ?? "horizontal",
+  // Tall by default: Zebra, Rollo and most 4×6 thermal printers feed labels tall.
+  // Saved as "layout" so a horizontal choice saved before this default changed is dropped.
+  orientation: saved.layout ?? "vertical",
   trim: saved.trim ?? true,
   bw: saved.bw ?? false,
   extraRotation: 0, // the user's taps on Rotate, on top of the automatic turn
@@ -29,7 +31,7 @@ const state = {
 };
 
 const saveSettings = () => storage.set("labelSettings", {
-  sizeId: state.sizeId, custom: state.custom, orientation: state.orientation, trim: state.trim, bw: state.bw,
+  sizeId: state.sizeId, custom: state.custom, layout: state.orientation, trim: state.trim, bw: state.bw,
 });
 
 function labelSize() {
@@ -61,7 +63,7 @@ export function labelView() {
 
 function fileHint() {
   if (!state.file) {
-    return "Pick a shipping label you downloaded (PDF, PNG or JPG). It's trimmed, turned horizontal and sized to fit your label.";
+    return "Pick a shipping label you downloaded (PDF, PNG or JPG). It's trimmed, turned to match your label and sized to fit.";
   }
   const pages = state.file.pages > 1 ? ` · page ${state.pageIndex + 1} of ${state.file.pages}` : "";
   return `${h(state.file.name)}${pages}`;
@@ -97,8 +99,8 @@ function bodyHTML() {
       ${custom}
       <label class="field"><span>Layout</span>
         <select name="orientation">
-          <option value="horizontal" ${state.orientation === "horizontal" ? "selected" : ""}>Horizontal (wide)</option>
           <option value="vertical" ${state.orientation === "vertical" ? "selected" : ""}>Vertical (tall)</option>
+          <option value="horizontal" ${state.orientation === "horizontal" ? "selected" : ""}>Horizontal (wide)</option>
         </select></label>
       <label class="toggle"><span>Trim white space<small>Cuts a label out of a full letter-size page.</small></span>
         <input type="checkbox" name="trim" ${state.trim ? "checked" : ""}></label>
