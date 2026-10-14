@@ -37,3 +37,22 @@ export const storage = {
     }
   },
 };
+
+/** Opens the iOS share sheet with a file (Save to Files, Mail, AirDrop, other apps…), or downloads it. */
+export async function shareFile(file, title) {
+  if (navigator.canShare?.({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file], title });
+      return;
+    } catch (err) {
+      if (err.name === "AbortError") return;
+      // Fall through to a plain download.
+    }
+  }
+  const url = URL.createObjectURL(file);
+  const a = Object.assign(document.createElement("a"), { href: url, download: file.name });
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
