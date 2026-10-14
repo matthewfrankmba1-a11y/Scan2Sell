@@ -8,6 +8,7 @@ import { normalizeBarcode } from "../shared/labelParser.js";
 import { labelPatch, newPair } from "../shared/pairs.js";
 import { planImport } from "../shared/csvImport.js";
 import * as views from "./views.js";
+import { labelView, mountLabelTool } from "./labelTool.js";
 
 const app = document.getElementById("app");
 const scannerEl = document.getElementById("scanner");
@@ -28,6 +29,7 @@ function parseRoute() {
   const item = hash.match(/^\/item\/(.+)$/);
   if (item) return { name: "item", id: decodeURIComponent(item[1]) };
   if (hash === "/settings") return { name: "settings" };
+  if (hash === "/label") return { name: "label" };
   return { name: "list" };
 }
 
@@ -40,6 +42,10 @@ function render() {
     if (!pair) return void (location.hash = "#/");
     if (sameView) return updateDetail(pair);
     app.innerHTML = views.detailView(pair);
+  } else if (route.name === "label") {
+    if (sameView) return; // the label tool redraws itself
+    app.innerHTML = labelView();
+    mountLabelTool(app.querySelector("[data-label-tool]"));
   } else if (route.name === "settings") {
     if (sameView && document.activeElement?.matches("#app input")) return; // don't clobber typing
     app.innerHTML = views.settingsView({

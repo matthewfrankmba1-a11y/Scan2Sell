@@ -1,4 +1,5 @@
 import { pairsToCSV } from "../shared/exportCSV.js";
+import { shareFile } from "./util.js";
 
 /** Opens the iOS share sheet with the CSV (Save to Files, Numbers, Mail, AirDrop…), or downloads it. */
 export async function exportSpreadsheet(pairs) {
@@ -9,19 +10,5 @@ export async function exportSpreadsheet(pairs) {
   const csv = "﻿" + pairsToCSV([...pairs].reverse());
   const file = new File([csv], name, { type: "text/csv" });
 
-  if (navigator.canShare?.({ files: [file] })) {
-    try {
-      await navigator.share({ files: [file], title: "Scan2Sell inventory" });
-      return;
-    } catch (err) {
-      if (err.name === "AbortError") return;
-      // Fall through to a plain download.
-    }
-  }
-  const url = URL.createObjectURL(file);
-  const a = Object.assign(document.createElement("a"), { href: url, download: name });
-  document.body.append(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 10000);
+  await shareFile(file, "Scan2Sell inventory");
 }

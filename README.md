@@ -48,6 +48,18 @@ cells leave them alone, and unknown UPCs are added. Use it to load
 corrections made in Numbers, Excel or Google Sheets, to restore a backup, or
 to move your list to another phone.
 
+**Label printer.** Tap the printer icon at the top of the list, or go to
+Settings → **Label printer**. Pick a shipping label you downloaded (PDF, PNG
+or JPG from eBay, StockX, GOAT, USPS and so on). Scan2Sell cuts the label out
+of the page and drops the instructions printed around it. It then turns the
+label horizontal and sizes it to your label: 4×6, Dymo 30256 or 30252,
+Brother 62 mm, or a custom size. **Print** sends it at that exact size.
+**Save PDF** or **Save image** opens the share sheet, so you can open the
+label in your label maker's own app (Dymo Connect, Brother iPrint&Label,
+Rollo, Phomemo, Munbyn). Use **Rotate** if it comes out the wrong way, and
+turn on **Black & white** for sharper barcodes on thermal printers. Your file
+stays on your phone and isn't uploaded.
+
 ## Put it online (free, about 10 minutes)
 
 The app needs a small server so your eBay/StockX keys stay secret. It's set up
